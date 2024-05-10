@@ -1,0 +1,16 @@
+name: Setup Rclone
+description: Set up your a specific version of Rclone
+inputs:
+  rclone-version:
+    description: 'Version Spec of the version to use. Examples: 1.16.x, 1.16.0, >=1.15.0'
+    default: current
+  platform:
+    description: 'Target paltform for Rclone to use. Examples: linux, darwin. Will use system platform by default.'
+  architecture:
+    description: 'Target architecture for Rclone to use. Examples: x86, x64. Will use system architecture by default.'
+outputs:
+  rclone-version:
+    description: 'The installed Rclone version'
+runs:
+  using: 'node20'
+  main: dist/main.mjs

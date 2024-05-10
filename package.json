@@ -1,0 +1,11 @@
+{
+  "name": "project",
+  "private": true,
+  "packageManager": "yarn@4.2.2",
+  "workspaces": [
+    "setup-rclone"
+  ],
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
