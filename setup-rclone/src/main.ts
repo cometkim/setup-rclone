@@ -51,6 +51,7 @@ try {
   }
 
   await installRclone(version, platform, architecture);
+  core.setOutput('rclone-version', version);
 } catch (err) {
   core.setFailed(err as Error);
 }

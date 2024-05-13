@@ -19710,7 +19710,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
     __name(getBooleanInput, "getBooleanInput");
     exports.getBooleanInput = getBooleanInput;
-    function setOutput(name, value) {
+    function setOutput2(name, value) {
       const filePath = process.env["GITHUB_OUTPUT"] || "";
       if (filePath) {
         return file_command_1.issueFileCommand("OUTPUT", file_command_1.prepareKeyValueMessage(name, value));
@@ -19718,8 +19718,8 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       process.stdout.write(os2.EOL);
       command_1.issueCommand("set-output", { name }, utils_1.toCommandValue(value));
     }
-    __name(setOutput, "setOutput");
-    exports.setOutput = setOutput;
+    __name(setOutput2, "setOutput");
+    exports.setOutput = setOutput2;
     function setCommandEcho(enabled) {
       command_1.issue("echo", enabled ? "on" : "off");
     }
@@ -29823,6 +29823,7 @@ try {
     throw new Error(`Arch ${searchArchitecture} is not supported`);
   }
   await installRclone(version, platform2, architecture);
+  core2.setOutput("rclone-version", version);
 } catch (err) {
   core2.setFailed(err);
 }
