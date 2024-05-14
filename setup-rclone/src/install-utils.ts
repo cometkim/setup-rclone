@@ -1,5 +1,6 @@
 import * as semver from 'semver';
 import * as core from '@actions/core';
+import { exec } from '@actions/exec';
 import * as gh from '@actions/github';
 import * as tc from '@actions/tool-cache';
 
@@ -34,6 +35,8 @@ export async function installRclone(version: string, platform: string, arch: str
 
     cachePath = await tc.cacheDir(toolPath, 'rclone', version, target);
     core.info(`Stored in cache @ ${cachePath}`);
+    
+    exec('ls', ['-la', cachePath]);
   }
 
   core.addPath(cachePath);
