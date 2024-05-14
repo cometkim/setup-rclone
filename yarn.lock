@@ -15,7 +15,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@actions/exec@npm:^1.0.0":
+"@actions/exec@npm:^1.0.0, @actions/exec@npm:^1.1.1":
   version: 1.1.1
   resolution: "@actions/exec@npm:1.1.1"
   dependencies:
@@ -632,6 +632,7 @@ __metadata:
   resolution: "setup-rclone@workspace:setup-rclone"
   dependencies:
     "@actions/core": "npm:1.10.1"
+    "@actions/exec": "npm:^1.1.1"
     "@actions/github": "npm:6.0.0"
     "@actions/tool-cache": "npm:2.0.1"
     "@types/node": "npm:^20.12.7"
