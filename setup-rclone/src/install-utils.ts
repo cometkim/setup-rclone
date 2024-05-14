@@ -20,13 +20,20 @@ export async function installRclone(version: string, platform: string, arch: str
   const target = `${platform}-${arch}`;
 
   let cachePath = tc.find('rclone', version, target);
-  if (!cachePath) {
+  if (cachePath) {
+    core.info(`Found in cache @ ${cachePath}`);
+  } else {
     const zipUrl = isOnCloud()
       ? `https://github.com/rclone/rclone/releases/download/${version}/rclone-${version}-${platform}-${arch}.zip`
       : `https://downloads.rclone.org/${version}/rclone-${version}-${platform}-${arch}.zip`;
+    core.info(`Downloading rclone from ${zipUrl}`);
+
     const zipPath = await tc.downloadTool(zipUrl, undefined, undefined, { 'user-agent': UA });
     const toolPath = await tc.extractZip(zipPath);
+    core.debug(`Extracted tool path: ${toolPath}`);
+
     cachePath = await tc.cacheDir(toolPath, 'rclone', version, target);
+    core.info(`Stored in cache @ ${cachePath}`);
   }
 
   core.addPath(cachePath);

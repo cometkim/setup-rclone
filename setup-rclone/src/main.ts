@@ -36,6 +36,7 @@ async function main() {
     if (!version) {
       throw new Error(`rclone-version ${inputVersion} is not available`);
     }
+    core.info(`rclone-version: ${version}`);
 
     const inputPlatform = core.getInput('platform');
     const searchPlatform = inputPlatform || os.platform();
@@ -43,6 +44,7 @@ async function main() {
     if (!platform) {
       throw new Error(`OS ${searchPlatform} is not supported`);
     }
+    core.info(`target platform: ${platform}`);
 
     const inputArchitecture = core.getInput('architecture');
     const searchArchitecture = inputArchitecture || os.arch();
@@ -50,6 +52,7 @@ async function main() {
     if (!architecture) {
       throw new Error(`Arch ${searchArchitecture} is not supported`);
     }
+    core.info(`target arch: ${architecture}`);
 
     await installRclone(version, platform, architecture);
     core.setOutput('rclone-version', version);

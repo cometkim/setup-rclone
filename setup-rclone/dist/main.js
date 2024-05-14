@@ -920,7 +920,7 @@ var require_tunnel = __commonJS({
         connectOptions.headers = connectOptions.headers || {};
         connectOptions.headers["Proxy-Authorization"] = "Basic " + new Buffer(connectOptions.proxyAuth).toString("base64");
       }
-      debug("making CONNECT request");
+      debug2("making CONNECT request");
       var connectReq = self.request(connectOptions);
       connectReq.useChunkedEncodingByDefault = false;
       connectReq.once("response", onResponse);
@@ -942,7 +942,7 @@ var require_tunnel = __commonJS({
         connectReq.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode !== 200) {
-          debug(
+          debug2(
             "tunneling socket could not be established, statusCode=%d",
             res.statusCode
           );
@@ -954,7 +954,7 @@ var require_tunnel = __commonJS({
           return;
         }
         if (head.length > 0) {
-          debug("got illegal response body from proxy");
+          debug2("got illegal response body from proxy");
           socket.destroy();
           var error = new Error("got illegal response body from proxy");
           error.code = "ECONNRESET";
@@ -962,14 +962,14 @@ var require_tunnel = __commonJS({
           self.removeSocket(placeholder);
           return;
         }
-        debug("tunneling connection has established");
+        debug2("tunneling connection has established");
         self.sockets[self.sockets.indexOf(placeholder)] = socket;
         return cb(socket);
       }
       __name(onConnect, "onConnect");
       function onError(cause) {
         connectReq.removeAllListeners();
-        debug(
+        debug2(
           "tunneling socket could not be established, cause=%s\n",
           cause.message,
           cause.stack
@@ -1035,9 +1035,9 @@ var require_tunnel = __commonJS({
       return target;
     }
     __name(mergeOptions, "mergeOptions");
-    var debug;
+    var debug2;
     if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-      debug = /* @__PURE__ */ __name(function() {
+      debug2 = /* @__PURE__ */ __name(function() {
         var args = Array.prototype.slice.call(arguments);
         if (typeof args[0] === "string") {
           args[0] = "TUNNEL: " + args[0];
@@ -1047,10 +1047,10 @@ var require_tunnel = __commonJS({
         console.error.apply(console, args);
       }, "debug");
     } else {
-      debug = /* @__PURE__ */ __name(function() {
+      debug2 = /* @__PURE__ */ __name(function() {
       }, "debug");
     }
-    exports2.debug = debug;
+    exports2.debug = debug2;
   }
 });
 
@@ -18666,12 +18666,12 @@ var require_lib = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info = this._prepareRequest(verb, parsedUrl, headers);
+          let info3 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info, data);
+            response = yield this.requestRaw(info3, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler of this.handlers) {
@@ -18681,7 +18681,7 @@ var require_lib = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info, data);
+                return authenticationHandler.handleAuthentication(this, info3, data);
               } else {
                 return response;
               }
@@ -18704,8 +18704,8 @@ var require_lib = __commonJS({
                   }
                 }
               }
-              info = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info, data);
+              info3 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info3, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -18734,7 +18734,7 @@ var require_lib = __commonJS({
        * @param info
        * @param data
        */
-      requestRaw(info, data) {
+      requestRaw(info3, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -18747,7 +18747,7 @@ var require_lib = __commonJS({
               }
             }
             __name(callbackForResult, "callbackForResult");
-            this.requestRawWithCallback(info, data, callbackForResult);
+            this.requestRawWithCallback(info3, data, callbackForResult);
           });
         });
       }
@@ -18757,12 +18757,12 @@ var require_lib = __commonJS({
        * @param data
        * @param onResult
        */
-      requestRawWithCallback(info, data, onResult) {
+      requestRawWithCallback(info3, data, onResult) {
         if (typeof data === "string") {
-          if (!info.options.headers) {
-            info.options.headers = {};
+          if (!info3.options.headers) {
+            info3.options.headers = {};
           }
-          info.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info3.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -18772,7 +18772,7 @@ var require_lib = __commonJS({
           }
         }
         __name(handleResult, "handleResult");
-        const req = info.httpModule.request(info.options, (msg) => {
+        const req = info3.httpModule.request(info3.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -18784,7 +18784,7 @@ var require_lib = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info.options.path}`));
+          handleResult(new Error(`Request timeout: ${info3.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -18820,27 +18820,27 @@ var require_lib = __commonJS({
         return this._getProxyAgentDispatcher(parsedUrl, proxyUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info = {};
-        info.parsedUrl = requestUrl;
-        const usingSsl = info.parsedUrl.protocol === "https:";
-        info.httpModule = usingSsl ? https : http;
+        const info3 = {};
+        info3.parsedUrl = requestUrl;
+        const usingSsl = info3.parsedUrl.protocol === "https:";
+        info3.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info.options = {};
-        info.options.host = info.parsedUrl.hostname;
-        info.options.port = info.parsedUrl.port ? parseInt(info.parsedUrl.port) : defaultPort;
-        info.options.path = (info.parsedUrl.pathname || "") + (info.parsedUrl.search || "");
-        info.options.method = method;
-        info.options.headers = this._mergeHeaders(headers);
+        info3.options = {};
+        info3.options.host = info3.parsedUrl.hostname;
+        info3.options.port = info3.parsedUrl.port ? parseInt(info3.parsedUrl.port) : defaultPort;
+        info3.options.path = (info3.parsedUrl.pathname || "") + (info3.parsedUrl.search || "");
+        info3.options.method = method;
+        info3.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info.options.headers["user-agent"] = this.userAgent;
+          info3.options.headers["user-agent"] = this.userAgent;
         }
-        info.options.agent = this._getAgent(info.parsedUrl);
+        info3.options.agent = this._getAgent(info3.parsedUrl);
         if (this.handlers) {
           for (const handler of this.handlers) {
-            handler.prepareRequest(info.options);
+            handler.prepareRequest(info3.options);
           }
         }
-        return info;
+        return info3;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -19730,11 +19730,11 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
     __name(isDebug, "isDebug");
     exports2.isDebug = isDebug;
-    function debug(message) {
+    function debug2(message) {
       command_1.issueCommand("debug", {}, message);
     }
-    __name(debug, "debug");
-    exports2.debug = debug;
+    __name(debug2, "debug");
+    exports2.debug = debug2;
     function error(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -19750,11 +19750,11 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
     __name(notice, "notice");
     exports2.notice = notice;
-    function info(message) {
+    function info3(message) {
       process.stdout.write(message + os2.EOL);
     }
-    __name(info, "info");
-    exports2.info = info;
+    __name(info3, "info");
+    exports2.info = info3;
     function startGroup(name) {
       command_1.issue("group", name);
     }
@@ -19857,9 +19857,9 @@ var require_constants6 = __commonJS({
 var require_debug = __commonJS({
   "../node_modules/semver/internal/debug.js"(exports2, module2) {
     "use strict";
-    var debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {
+    var debug2 = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {
     };
-    module2.exports = debug;
+    module2.exports = debug2;
   }
 });
 
@@ -19872,7 +19872,7 @@ var require_re = __commonJS({
       MAX_SAFE_BUILD_LENGTH,
       MAX_LENGTH
     } = require_constants6();
-    var debug = require_debug();
+    var debug2 = require_debug();
     exports2 = module2.exports = {};
     var re = exports2.re = [];
     var safeRe = exports2.safeRe = [];
@@ -19894,7 +19894,7 @@ var require_re = __commonJS({
     var createToken = /* @__PURE__ */ __name((name, value, isGlobal) => {
       const safe = makeSafeRegex(value);
       const index = R++;
-      debug(name, index, value);
+      debug2(name, index, value);
       t[name] = index;
       src[index] = value;
       re[index] = new RegExp(value, isGlobal ? "g" : void 0);
@@ -19994,7 +19994,7 @@ var require_identifiers = __commonJS({
 var require_semver = __commonJS({
   "../node_modules/semver/classes/semver.js"(exports2, module2) {
     "use strict";
-    var debug = require_debug();
+    var debug2 = require_debug();
     var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants6();
     var { safeRe: re, t } = require_re();
     var parseOptions = require_parse_options();
@@ -20019,7 +20019,7 @@ var require_semver = __commonJS({
             `version is longer than ${MAX_LENGTH} characters`
           );
         }
-        debug("SemVer", version, options);
+        debug2("SemVer", version, options);
         this.options = options;
         this.loose = !!options.loose;
         this.includePrerelease = !!options.includePrerelease;
@@ -20067,7 +20067,7 @@ var require_semver = __commonJS({
         return this.version;
       }
       compare(other) {
-        debug("SemVer.compare", this.version, this.options, other);
+        debug2("SemVer.compare", this.version, this.options, other);
         if (!(other instanceof _SemVer)) {
           if (typeof other === "string" && other === this.version) {
             return 0;
@@ -20100,7 +20100,7 @@ var require_semver = __commonJS({
         do {
           const a = this.prerelease[i];
           const b = other.prerelease[i];
-          debug("prerelease compare", i, a, b);
+          debug2("prerelease compare", i, a, b);
           if (a === void 0 && b === void 0) {
             return 0;
           } else if (b === void 0) {
@@ -20122,7 +20122,7 @@ var require_semver = __commonJS({
         do {
           const a = this.build[i];
           const b = other.build[i];
-          debug("prerelease compare", i, a, b);
+          debug2("prerelease compare", i, a, b);
           if (a === void 0 && b === void 0) {
             return 0;
           } else if (b === void 0) {
@@ -21344,21 +21344,21 @@ var require_range = __commonJS({
         const loose = this.options.loose;
         const hr = loose ? re[t.HYPHENRANGELOOSE] : re[t.HYPHENRANGE];
         range = range.replace(hr, hyphenReplace(this.options.includePrerelease));
-        debug("hyphen replace", range);
+        debug2("hyphen replace", range);
         range = range.replace(re[t.COMPARATORTRIM], comparatorTrimReplace);
-        debug("comparator trim", range);
+        debug2("comparator trim", range);
         range = range.replace(re[t.TILDETRIM], tildeTrimReplace);
-        debug("tilde trim", range);
+        debug2("tilde trim", range);
         range = range.replace(re[t.CARETTRIM], caretTrimReplace);
-        debug("caret trim", range);
+        debug2("caret trim", range);
         let rangeList = range.split(" ").map((comp) => parseComparator(comp, this.options)).join(" ").split(/\s+/).map((comp) => replaceGTE0(comp, this.options));
         if (loose) {
           rangeList = rangeList.filter((comp) => {
-            debug("loose invalid filter", comp, this.options);
+            debug2("loose invalid filter", comp, this.options);
             return !!comp.match(re[t.COMPARATORLOOSE]);
           });
         }
-        debug("range list", rangeList);
+        debug2("range list", rangeList);
         const rangeMap = /* @__PURE__ */ new Map();
         const comparators = rangeList.map((comp) => new Comparator(comp, this.options));
         for (const comp of comparators) {
@@ -21413,7 +21413,7 @@ var require_range = __commonJS({
     var cache = new LRU({ max: 1e3 });
     var parseOptions = require_parse_options();
     var Comparator = require_comparator();
-    var debug = require_debug();
+    var debug2 = require_debug();
     var SemVer = require_semver();
     var {
       safeRe: re,
@@ -21438,15 +21438,15 @@ var require_range = __commonJS({
       return result;
     }, "isSatisfiable");
     var parseComparator = /* @__PURE__ */ __name((comp, options) => {
-      debug("comp", comp, options);
+      debug2("comp", comp, options);
       comp = replaceCarets(comp, options);
-      debug("caret", comp);
+      debug2("caret", comp);
       comp = replaceTildes(comp, options);
-      debug("tildes", comp);
+      debug2("tildes", comp);
       comp = replaceXRanges(comp, options);
-      debug("xrange", comp);
+      debug2("xrange", comp);
       comp = replaceStars(comp, options);
-      debug("stars", comp);
+      debug2("stars", comp);
       return comp;
     }, "parseComparator");
     var isX = /* @__PURE__ */ __name((id) => !id || id.toLowerCase() === "x" || id === "*", "isX");
@@ -21456,7 +21456,7 @@ var require_range = __commonJS({
     var replaceTilde = /* @__PURE__ */ __name((comp, options) => {
       const r = options.loose ? re[t.TILDELOOSE] : re[t.TILDE];
       return comp.replace(r, (_, M, m, p, pr) => {
-        debug("tilde", comp, _, M, m, p, pr);
+        debug2("tilde", comp, _, M, m, p, pr);
         let ret;
         if (isX(M)) {
           ret = "";
@@ -21465,12 +21465,12 @@ var require_range = __commonJS({
         } else if (isX(p)) {
           ret = `>=${M}.${m}.0 <${M}.${+m + 1}.0-0`;
         } else if (pr) {
-          debug("replaceTilde pr", pr);
+          debug2("replaceTilde pr", pr);
           ret = `>=${M}.${m}.${p}-${pr} <${M}.${+m + 1}.0-0`;
         } else {
           ret = `>=${M}.${m}.${p} <${M}.${+m + 1}.0-0`;
         }
-        debug("tilde return", ret);
+        debug2("tilde return", ret);
         return ret;
       });
     }, "replaceTilde");
@@ -21478,11 +21478,11 @@ var require_range = __commonJS({
       return comp.trim().split(/\s+/).map((c) => replaceCaret(c, options)).join(" ");
     }, "replaceCarets");
     var replaceCaret = /* @__PURE__ */ __name((comp, options) => {
-      debug("caret", comp, options);
+      debug2("caret", comp, options);
       const r = options.loose ? re[t.CARETLOOSE] : re[t.CARET];
       const z = options.includePrerelease ? "-0" : "";
       return comp.replace(r, (_, M, m, p, pr) => {
-        debug("caret", comp, _, M, m, p, pr);
+        debug2("caret", comp, _, M, m, p, pr);
         let ret;
         if (isX(M)) {
           ret = "";
@@ -21495,7 +21495,7 @@ var require_range = __commonJS({
             ret = `>=${M}.${m}.0${z} <${+M + 1}.0.0-0`;
           }
         } else if (pr) {
-          debug("replaceCaret pr", pr);
+          debug2("replaceCaret pr", pr);
           if (M === "0") {
             if (m === "0") {
               ret = `>=${M}.${m}.${p}-${pr} <${M}.${m}.${+p + 1}-0`;
@@ -21506,7 +21506,7 @@ var require_range = __commonJS({
             ret = `>=${M}.${m}.${p}-${pr} <${+M + 1}.0.0-0`;
           }
         } else {
-          debug("no pr");
+          debug2("no pr");
           if (M === "0") {
             if (m === "0") {
               ret = `>=${M}.${m}.${p}${z} <${M}.${m}.${+p + 1}-0`;
@@ -21517,19 +21517,19 @@ var require_range = __commonJS({
             ret = `>=${M}.${m}.${p} <${+M + 1}.0.0-0`;
           }
         }
-        debug("caret return", ret);
+        debug2("caret return", ret);
         return ret;
       });
     }, "replaceCaret");
     var replaceXRanges = /* @__PURE__ */ __name((comp, options) => {
-      debug("replaceXRanges", comp, options);
+      debug2("replaceXRanges", comp, options);
       return comp.split(/\s+/).map((c) => replaceXRange(c, options)).join(" ");
     }, "replaceXRanges");
     var replaceXRange = /* @__PURE__ */ __name((comp, options) => {
       comp = comp.trim();
       const r = options.loose ? re[t.XRANGELOOSE] : re[t.XRANGE];
       return comp.replace(r, (ret, gtlt, M, m, p, pr) => {
-        debug("xRange", comp, ret, gtlt, M, m, p, pr);
+        debug2("xRange", comp, ret, gtlt, M, m, p, pr);
         const xM = isX(M);
         const xm = xM || isX(m);
         const xp = xm || isX(p);
@@ -21576,16 +21576,16 @@ var require_range = __commonJS({
         } else if (xp) {
           ret = `>=${M}.${m}.0${pr} <${M}.${+m + 1}.0-0`;
         }
-        debug("xRange return", ret);
+        debug2("xRange return", ret);
         return ret;
       });
     }, "replaceXRange");
     var replaceStars = /* @__PURE__ */ __name((comp, options) => {
-      debug("replaceStars", comp, options);
+      debug2("replaceStars", comp, options);
       return comp.trim().replace(re[t.STAR], "");
     }, "replaceStars");
     var replaceGTE0 = /* @__PURE__ */ __name((comp, options) => {
-      debug("replaceGTE0", comp, options);
+      debug2("replaceGTE0", comp, options);
       return comp.trim().replace(re[options.includePrerelease ? t.GTE0PRE : t.GTE0], "");
     }, "replaceGTE0");
     var hyphenReplace = /* @__PURE__ */ __name((incPr) => ($0, from, fM, fm, fp, fpr, fb, to, tM, tm, tp, tpr, tb) => {
@@ -21623,7 +21623,7 @@ var require_range = __commonJS({
       }
       if (version.prerelease.length && !options.includePrerelease) {
         for (let i = 0; i < set.length; i++) {
-          debug(set[i].semver);
+          debug2(set[i].semver);
           if (set[i].semver === Comparator.ANY) {
             continue;
           }
@@ -21663,7 +21663,7 @@ var require_comparator = __commonJS({
           }
         }
         comp = comp.trim().split(/\s+/).join(" ");
-        debug("comparator", comp, options);
+        debug2("comparator", comp, options);
         this.options = options;
         this.loose = !!options.loose;
         this.parse(comp);
@@ -21672,7 +21672,7 @@ var require_comparator = __commonJS({
         } else {
           this.value = this.operator + this.semver.version;
         }
-        debug("comp", this);
+        debug2("comp", this);
       }
       parse(comp) {
         const r = this.options.loose ? re[t.COMPARATORLOOSE] : re[t.COMPARATOR];
@@ -21694,7 +21694,7 @@ var require_comparator = __commonJS({
         return this.value;
       }
       test(version) {
-        debug("Comparator.test", version, this.options.loose);
+        debug2("Comparator.test", version, this.options.loose);
         if (this.semver === ANY || version === ANY) {
           return true;
         }
@@ -21751,7 +21751,7 @@ var require_comparator = __commonJS({
     var parseOptions = require_parse_options();
     var { safeRe: re, t } = require_re();
     var cmp = require_cmp();
-    var debug = require_debug();
+    var debug2 = require_debug();
     var SemVer = require_semver();
     var Range = require_range();
   }
@@ -26960,15 +26960,15 @@ var require_semver3 = __commonJS({
   "../node_modules/@actions/tool-cache/node_modules/semver/semver.js"(exports2, module2) {
     "use strict";
     exports2 = module2.exports = SemVer;
-    var debug;
+    var debug2;
     if (typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG)) {
-      debug = /* @__PURE__ */ __name(function() {
+      debug2 = /* @__PURE__ */ __name(function() {
         var args = Array.prototype.slice.call(arguments, 0);
         args.unshift("SEMVER");
         console.log.apply(console, args);
       }, "debug");
     } else {
-      debug = /* @__PURE__ */ __name(function() {
+      debug2 = /* @__PURE__ */ __name(function() {
       }, "debug");
     }
     exports2.SEMVER_SPEC_VERSION = "2.0.0";
@@ -27088,7 +27088,7 @@ var require_semver3 = __commonJS({
     tok("STAR");
     src[t.STAR] = "(<|>)?=?\\s*\\*";
     for (i = 0; i < R; i++) {
-      debug(i, src[i]);
+      debug2(i, src[i]);
       if (!re[i]) {
         re[i] = new RegExp(src[i]);
         safeRe[i] = new RegExp(makeSafeRe(src[i]));
@@ -27158,7 +27158,7 @@ var require_semver3 = __commonJS({
       if (!(this instanceof SemVer)) {
         return new SemVer(version, options);
       }
-      debug("SemVer", version, options);
+      debug2("SemVer", version, options);
       this.options = options;
       this.loose = !!options.loose;
       var m = version.trim().match(options.loose ? safeRe[t.LOOSE] : safeRe[t.FULL]);
@@ -27206,7 +27206,7 @@ var require_semver3 = __commonJS({
       return this.version;
     };
     SemVer.prototype.compare = function(other) {
-      debug("SemVer.compare", this.version, this.options, other);
+      debug2("SemVer.compare", this.version, this.options, other);
       if (!(other instanceof SemVer)) {
         other = new SemVer(other, this.options);
       }
@@ -27233,7 +27233,7 @@ var require_semver3 = __commonJS({
       do {
         var a = this.prerelease[i2];
         var b = other.prerelease[i2];
-        debug("prerelease compare", i2, a, b);
+        debug2("prerelease compare", i2, a, b);
         if (a === void 0 && b === void 0) {
           return 0;
         } else if (b === void 0) {
@@ -27255,7 +27255,7 @@ var require_semver3 = __commonJS({
       do {
         var a = this.build[i2];
         var b = other.build[i2];
-        debug("prerelease compare", i2, a, b);
+        debug2("prerelease compare", i2, a, b);
         if (a === void 0 && b === void 0) {
           return 0;
         } else if (b === void 0) {
@@ -27535,7 +27535,7 @@ var require_semver3 = __commonJS({
         return new Comparator(comp, options);
       }
       comp = comp.trim().split(/\s+/).join(" ");
-      debug("comparator", comp, options);
+      debug2("comparator", comp, options);
       this.options = options;
       this.loose = !!options.loose;
       this.parse(comp);
@@ -27544,7 +27544,7 @@ var require_semver3 = __commonJS({
       } else {
         this.value = this.operator + this.semver.version;
       }
-      debug("comp", this);
+      debug2("comp", this);
     }
     __name(Comparator, "Comparator");
     var ANY = {};
@@ -27568,7 +27568,7 @@ var require_semver3 = __commonJS({
       return this.value;
     };
     Comparator.prototype.test = function(version) {
-      debug("Comparator.test", version, this.options.loose);
+      debug2("Comparator.test", version, this.options.loose);
       if (this.semver === ANY || version === ANY) {
         return true;
       }
@@ -27662,9 +27662,9 @@ var require_semver3 = __commonJS({
       var loose = this.options.loose;
       var hr = loose ? safeRe[t.HYPHENRANGELOOSE] : safeRe[t.HYPHENRANGE];
       range = range.replace(hr, hyphenReplace);
-      debug("hyphen replace", range);
+      debug2("hyphen replace", range);
       range = range.replace(safeRe[t.COMPARATORTRIM], comparatorTrimReplace);
-      debug("comparator trim", range, safeRe[t.COMPARATORTRIM]);
+      debug2("comparator trim", range, safeRe[t.COMPARATORTRIM]);
       range = range.replace(safeRe[t.TILDETRIM], tildeTrimReplace);
       range = range.replace(safeRe[t.CARETTRIM], caretTrimReplace);
       range = range.split(/\s+/).join(" ");
@@ -27719,15 +27719,15 @@ var require_semver3 = __commonJS({
     }
     __name(toComparators, "toComparators");
     function parseComparator(comp, options) {
-      debug("comp", comp, options);
+      debug2("comp", comp, options);
       comp = replaceCarets(comp, options);
-      debug("caret", comp);
+      debug2("caret", comp);
       comp = replaceTildes(comp, options);
-      debug("tildes", comp);
+      debug2("tildes", comp);
       comp = replaceXRanges(comp, options);
-      debug("xrange", comp);
+      debug2("xrange", comp);
       comp = replaceStars(comp, options);
-      debug("stars", comp);
+      debug2("stars", comp);
       return comp;
     }
     __name(parseComparator, "parseComparator");
@@ -27744,7 +27744,7 @@ var require_semver3 = __commonJS({
     function replaceTilde(comp, options) {
       var r = options.loose ? safeRe[t.TILDELOOSE] : safeRe[t.TILDE];
       return comp.replace(r, function(_, M, m, p, pr) {
-        debug("tilde", comp, _, M, m, p, pr);
+        debug2("tilde", comp, _, M, m, p, pr);
         var ret;
         if (isX(M)) {
           ret = "";
@@ -27753,12 +27753,12 @@ var require_semver3 = __commonJS({
         } else if (isX(p)) {
           ret = ">=" + M + "." + m + ".0 <" + M + "." + (+m + 1) + ".0";
         } else if (pr) {
-          debug("replaceTilde pr", pr);
+          debug2("replaceTilde pr", pr);
           ret = ">=" + M + "." + m + "." + p + "-" + pr + " <" + M + "." + (+m + 1) + ".0";
         } else {
           ret = ">=" + M + "." + m + "." + p + " <" + M + "." + (+m + 1) + ".0";
         }
-        debug("tilde return", ret);
+        debug2("tilde return", ret);
         return ret;
       });
     }
@@ -27770,10 +27770,10 @@ var require_semver3 = __commonJS({
     }
     __name(replaceCarets, "replaceCarets");
     function replaceCaret(comp, options) {
-      debug("caret", comp, options);
+      debug2("caret", comp, options);
       var r = options.loose ? safeRe[t.CARETLOOSE] : safeRe[t.CARET];
       return comp.replace(r, function(_, M, m, p, pr) {
-        debug("caret", comp, _, M, m, p, pr);
+        debug2("caret", comp, _, M, m, p, pr);
         var ret;
         if (isX(M)) {
           ret = "";
@@ -27786,7 +27786,7 @@ var require_semver3 = __commonJS({
             ret = ">=" + M + "." + m + ".0 <" + (+M + 1) + ".0.0";
           }
         } else if (pr) {
-          debug("replaceCaret pr", pr);
+          debug2("replaceCaret pr", pr);
           if (M === "0") {
             if (m === "0") {
               ret = ">=" + M + "." + m + "." + p + "-" + pr + " <" + M + "." + m + "." + (+p + 1);
@@ -27797,7 +27797,7 @@ var require_semver3 = __commonJS({
             ret = ">=" + M + "." + m + "." + p + "-" + pr + " <" + (+M + 1) + ".0.0";
           }
         } else {
-          debug("no pr");
+          debug2("no pr");
           if (M === "0") {
             if (m === "0") {
               ret = ">=" + M + "." + m + "." + p + " <" + M + "." + m + "." + (+p + 1);
@@ -27808,13 +27808,13 @@ var require_semver3 = __commonJS({
             ret = ">=" + M + "." + m + "." + p + " <" + (+M + 1) + ".0.0";
           }
         }
-        debug("caret return", ret);
+        debug2("caret return", ret);
         return ret;
       });
     }
     __name(replaceCaret, "replaceCaret");
     function replaceXRanges(comp, options) {
-      debug("replaceXRanges", comp, options);
+      debug2("replaceXRanges", comp, options);
       return comp.split(/\s+/).map(function(comp2) {
         return replaceXRange(comp2, options);
       }).join(" ");
@@ -27824,7 +27824,7 @@ var require_semver3 = __commonJS({
       comp = comp.trim();
       var r = options.loose ? safeRe[t.XRANGELOOSE] : safeRe[t.XRANGE];
       return comp.replace(r, function(ret, gtlt, M, m, p, pr) {
-        debug("xRange", comp, ret, gtlt, M, m, p, pr);
+        debug2("xRange", comp, ret, gtlt, M, m, p, pr);
         var xM = isX(M);
         var xm = xM || isX(m);
         var xp = xm || isX(p);
@@ -27868,13 +27868,13 @@ var require_semver3 = __commonJS({
         } else if (xp) {
           ret = ">=" + M + "." + m + ".0" + pr + " <" + M + "." + (+m + 1) + ".0" + pr;
         }
-        debug("xRange return", ret);
+        debug2("xRange return", ret);
         return ret;
       });
     }
     __name(replaceXRange, "replaceXRange");
     function replaceStars(comp, options) {
-      debug("replaceStars", comp, options);
+      debug2("replaceStars", comp, options);
       return comp.trim().replace(safeRe[t.STAR], "");
     }
     __name(replaceStars, "replaceStars");
@@ -27928,7 +27928,7 @@ var require_semver3 = __commonJS({
       }
       if (version.prerelease.length && !options.includePrerelease) {
         for (i2 = 0; i2 < set.length; i2++) {
-          debug(set[i2].semver);
+          debug2(set[i2].semver);
           if (set[i2].semver === ANY) {
             continue;
           }
@@ -29719,11 +29719,16 @@ __name(chooseVersion, "chooseVersion");
 async function installRclone(version, platform2, arch2) {
   const target = `${platform2}-${arch2}`;
   let cachePath = tc.find("rclone", version, target);
-  if (!cachePath) {
+  if (cachePath) {
+    core.info(`Found in cache @ ${cachePath}`);
+  } else {
     const zipUrl = isOnCloud() ? `https://github.com/rclone/rclone/releases/download/${version}/rclone-${version}-${platform2}-${arch2}.zip` : `https://downloads.rclone.org/${version}/rclone-${version}-${platform2}-${arch2}.zip`;
+    core.info(`Downloading rclone from ${zipUrl}`);
     const zipPath = await tc.downloadTool(zipUrl, void 0, void 0, { "user-agent": UA });
     const toolPath = await tc.extractZip(zipPath);
+    core.debug(`Extracted tool path: ${toolPath}`);
     cachePath = await tc.cacheDir(toolPath, "rclone", version, target);
+    core.info(`Stored in cache @ ${cachePath}`);
   }
   core.addPath(cachePath);
 }
@@ -29805,18 +29810,21 @@ async function main() {
     if (!version) {
       throw new Error(`rclone-version ${inputVersion} is not available`);
     }
+    core2.info(`rclone-version: ${version}`);
     const inputPlatform = core2.getInput("platform");
     const searchPlatform = inputPlatform || os.platform();
     const platform2 = platformToSupport[searchPlatform];
     if (!platform2) {
       throw new Error(`OS ${searchPlatform} is not supported`);
     }
+    core2.info(`target platform: ${platform2}`);
     const inputArchitecture = core2.getInput("architecture");
     const searchArchitecture = inputArchitecture || os.arch();
     const architecture = architectureToSupport[searchArchitecture];
     if (!architecture) {
       throw new Error(`Arch ${searchArchitecture} is not supported`);
     }
+    core2.info(`target arch: ${architecture}`);
     await installRclone(version, platform2, architecture);
     core2.setOutput("rclone-version", version);
   } catch (err) {
