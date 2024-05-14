@@ -1,5 +1,6 @@
 import * as os from 'node:os';
 import * as core from '@actions/core';
+import { exec } from '@actions/exec';
 
 import { chooseVersion, installRclone } from './install-utils.ts';
 
@@ -55,6 +56,8 @@ async function main() {
     core.info(`target arch: ${architecture}`);
 
     await installRclone(version, platform, architecture);
+    await exec('rclone', ['--version'], { failOnStdErr: true });
+
     core.setOutput('rclone-version', version);
   } catch (err) {
     core.setFailed(err as Error);
