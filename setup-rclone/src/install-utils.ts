@@ -37,8 +37,6 @@ export async function installRclone(version: string, platform: string, arch: str
 
     cachePath = await tc.cacheDir(toolPath, 'rclone', version, target);
     core.info(`Stored in cache @ ${cachePath}`);
-    
-    exec('ls', ['-la', cachePath]);
   }
 
   core.addPath(cachePath);
