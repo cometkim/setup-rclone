@@ -1,3 +1,4 @@
+import * as path from 'node:path';
 import * as semver from 'semver';
 import * as core from '@actions/core';
 import { exec } from '@actions/exec';
@@ -24,13 +25,14 @@ export async function installRclone(version: string, platform: string, arch: str
   if (cachePath) {
     core.info(`Found in cache @ ${cachePath}`);
   } else {
+    const base = `rclone-v${version}-${platform}-${arch}`;
     const zipUrl = isOnCloud()
-      ? `https://github.com/rclone/rclone/releases/download/v${version}/rclone-v${version}-${platform}-${arch}.zip`
-      : `https://downloads.rclone.org/v${version}/rclone-v${version}-${platform}-${arch}.zip`;
+      ? `https://github.com/rclone/rclone/releases/download/v${version}/${base}.zip`
+      : `https://downloads.rclone.org/v${version}/${base}.zip`;
     core.info(`Downloading rclone from ${zipUrl}`);
 
     const zipPath = await tc.downloadTool(zipUrl, undefined, undefined, { 'user-agent': UA });
-    const toolPath = await tc.extractZip(zipPath);
+    const toolPath = path.join(await tc.extractZip(zipPath), base);
     core.debug(`Extracted tool path: ${toolPath}`);
 
     cachePath = await tc.cacheDir(toolPath, 'rclone', version, target);
