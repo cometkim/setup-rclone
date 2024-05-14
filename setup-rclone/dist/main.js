@@ -29122,7 +29122,7 @@ async function retrieveCurrentVersion() {
     }
   });
   const data = await res.text();
-  return data.split(" ")[1].slice(1);
+  return data.split(" ")[1].slice(1).trim();
 }
 __name(retrieveCurrentVersion, "retrieveCurrentVersion");
 async function* retrieveAllVersions() {
