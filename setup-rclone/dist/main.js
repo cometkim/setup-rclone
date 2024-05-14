@@ -29722,7 +29722,7 @@ async function installRclone(version, platform2, arch2) {
   if (cachePath) {
     core.info(`Found in cache @ ${cachePath}`);
   } else {
-    const zipUrl = isOnCloud() ? `https://github.com/rclone/rclone/releases/download/${version}/rclone-${version}-${platform2}-${arch2}.zip` : `https://downloads.rclone.org/${version}/rclone-${version}-${platform2}-${arch2}.zip`;
+    const zipUrl = isOnCloud() ? `https://github.com/rclone/rclone/releases/download/v${version}/rclone-v${version}-${platform2}-${arch2}.zip` : `https://downloads.rclone.org/v${version}/rclone-v${version}-${platform2}-${arch2}.zip`;
     core.info(`Downloading rclone from ${zipUrl}`);
     const zipPath = await tc.downloadTool(zipUrl, void 0, void 0, { "user-agent": UA });
     const toolPath = await tc.extractZip(zipPath);
