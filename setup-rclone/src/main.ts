@@ -29,29 +29,36 @@ const architectureToSupport: Partial<Record<string, string>> = {
   'mipsel': 'mipsel',
 };
 
-try {
-  const inputVersion = core.getInput('rclone-version');
-  const version = await chooseVersion(inputVersion);
-  if (!version) {
-    throw new Error(`rclone-version ${inputVersion} is not available`);
-  }
+async function main() {
+  try {
+    const inputVersion = core.getInput('rclone-version');
+    const version = await chooseVersion(inputVersion);
+    if (!version) {
+      throw new Error(`rclone-version ${inputVersion} is not available`);
+    }
 
-  const inputPlatform = core.getInput('platform');
-  const searchPlatform = inputPlatform || os.platform();
-  const platform = platformToSupport[searchPlatform];
-  if (!platform) {
-    throw new Error(`OS ${searchPlatform} is not supported`);
-  }
+    const inputPlatform = core.getInput('platform');
+    const searchPlatform = inputPlatform || os.platform();
+    const platform = platformToSupport[searchPlatform];
+    if (!platform) {
+      throw new Error(`OS ${searchPlatform} is not supported`);
+    }
 
-  const inputArchitecture = core.getInput('architecture');
-  const searchArchitecture = inputArchitecture || os.arch();
-  const architecture = architectureToSupport[searchArchitecture];
-  if (!architecture) {
-    throw new Error(`Arch ${searchArchitecture} is not supported`);
-  }
+    const inputArchitecture = core.getInput('architecture');
+    const searchArchitecture = inputArchitecture || os.arch();
+    const architecture = architectureToSupport[searchArchitecture];
+    if (!architecture) {
+      throw new Error(`Arch ${searchArchitecture} is not supported`);
+    }
 
-  await installRclone(version, platform, architecture);
-  core.setOutput('rclone-version', version);
-} catch (err) {
-  core.setFailed(err as Error);
+    await installRclone(version, platform, architecture);
+    core.setOutput('rclone-version', version);
+  } catch (err) {
+    core.setFailed(err as Error);
+  }
 }
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

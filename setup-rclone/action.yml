@@ -13,4 +13,4 @@ outputs:
     description: 'The installed Rclone version'
 runs:
   using: 'node20'
-  main: dist/main.mjs
+  main: dist/main.js
