@@ -48,7 +48,7 @@ async function retrieveCurrentVersion(): Promise<string> {
   });
   const data = await res.text();
   // e.g. `rclone v1.66.0`
-  return data.split(' ')[1];
+  return data.split(' ')[1].slice(1);
 }
 
 async function *retrieveAllVersions(): AsyncGenerator<string> {
