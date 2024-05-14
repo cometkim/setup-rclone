@@ -24,8 +24,8 @@ export async function installRclone(version: string, platform: string, arch: str
     core.info(`Found in cache @ ${cachePath}`);
   } else {
     const zipUrl = isOnCloud()
-      ? `https://github.com/rclone/rclone/releases/download/${version}/rclone-${version}-${platform}-${arch}.zip`
-      : `https://downloads.rclone.org/${version}/rclone-${version}-${platform}-${arch}.zip`;
+      ? `https://github.com/rclone/rclone/releases/download/v${version}/rclone-v${version}-${platform}-${arch}.zip`
+      : `https://downloads.rclone.org/v${version}/rclone-v${version}-${platform}-${arch}.zip`;
     core.info(`Downloading rclone from ${zipUrl}`);
 
     const zipPath = await tc.downloadTool(zipUrl, undefined, undefined, { 'user-agent': UA });
