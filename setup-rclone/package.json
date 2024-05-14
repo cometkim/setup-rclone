@@ -7,7 +7,7 @@
   },
   "main": "./src/main.ts",
   "publishConfig": {
-    "main": "./dist/main.js"
+    "main": "./dist/main.mjs"
   },
   "scripts": {
     "build": "nanobundle build --clean --standalone --no-sourcemap --no-legal-comments"
